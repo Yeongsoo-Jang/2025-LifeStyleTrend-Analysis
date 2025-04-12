@@ -1,5 +1,5 @@
 **📘 프로젝트 개요**  
-2025 라이프스타일 트렌드 예측 시스템은 **시계열 분석과 머신러닝을 결합**한 인테리어 트렌드 예측 파이프라인입니다. STL 분해, Prophet, ARIMA를 활용해 3가지 키워드(`Cost-Effective`, `HomeAppliances`, `UncommonStyle`)의 검색량 패턴을 분석하고 2025년 트렌드를 예측합니다.
+2025 라이프스타일 트렌드 예측 시스템은 **Naver 검색 데이터**를 기반으로 한 과학적 시계열 분석 파이프라인입니다. STL 분해, Prophet, ARIMA 모델을 결합해 3가지 키워드(`Cost-Effective`, `HomeAppliances`, `UncommonStyle`)의 2025년 검색량 패턴을 예측하며, **데이터 검증 → 모델링 → 앙상블 최적화**로 2025년 트렌드를 예측합니다.
 
 - **계절성 패턴 분석**: 52주 주기 STL 분해
 - **다중 모델 병렬 예측**: Prophet (계절성 강화) + ARIMA (단기 패턴)
@@ -70,24 +70,107 @@
 
 ---
 
-### 🚀 프로젝트 실행 방법
+🚀 프로젝트 실행 가이드
+1. **데이터 수집 및 전처리**
+```bash
+# Naver API 키 설정
+echo "NAVER_CLIENT_ID=your_id" > data/.env
+echo "NAVER_CLIENT_SECRET=your_secret" > data/.env
 
-1. 데이터 수집:
-    ```
-    python connector/connect.py
-    ```
+# 데이터 수집 및 정제
+python connector/connect.py
+```
 
-2. 분석 파이프라인 실행:
-    ```
-    python modeling/run_phase2.py
-    ```
+2. **분석 파이프라인 실행**
+```bash
+# STL 분해 + Prophet/ARIMA 병렬 예측
+python modeling/run_phase2.py
+```
 
-3. 결과 확인:
-    - `modeling/reports/trend_insights.html`: 종합 분석 리포트  
-    - `modeling/reports/real_time_search_trends.png`: 실시간 검색 트렌드 시각화  
+🛠 핵심 기술 및 데이터 검증 프로세스
+1. **데이터 검증 강화**
+```python
+# validator.py - 데이터 무결성 검증
+def validate_data(df: pd.DataFrame):
+    # 필수 컬럼 검증
+    assert {'date', 'group_name', 'ratio'} <= set(df.columns), "필수 컬럼 누락"
+    
+    # 날짜 범위 검증 (최소 2년 데이터)
+    date_range = pd.to_datetime(df['date']).max() - pd.to_datetime(df['date']).min()
+    assert date_range.days >= 730, f"데이터 범위 부족: {date_range.days}일"
+    
+    # 그룹별 데이터 밸런스 검증
+    group_counts = df['group_name'].value_counts()
+    assert group_counts.std() / group_counts.mean() < 0.1, "그룹 간 데이터 불균형"
+```
+
+2. **트러블슈팅 사례**
+🔍 문제 1: Prophet-ARIMA 예측 불일치
+증상: Prophet 예측값(158주)과 ARIMA 예측값(26주) 길이 불일치 → 앙상블 시 ValueError
+
+해결:
+
+```python
+# 앙상블 생성 전 데이터 정렬
+prophet_pred = forecasts[style]['prophet']['yhat'].iloc[-26:]  # 최근 26주만 선택
+arima_pred = forecasts[style]['arima_forecast']
+```
+
+🔍 문제 2: Naver API 401 오류
+증상: HTTP 401 Unauthorized 지속 발생
+
+원인: 환경변수(.env) 키 이름 불일치 + SSL 검증 문제
+
+해결:
+
+```python
+# naver_api.py 수정
+self.client_id = os.getenv("NAVER_CLIENT_ID")  # 기존: CLIENT_KEY
+self.ssl_context = ssl._create_unverified_context()  # SSL 검증 비활성화
+```
+
+🔍 문제 3: 계절성 피크 검출 실패
+증상: seasonal_peaks에서 월별 그룹화 실패
+
+원인: DatetimeIndex 미적용
+
+해결:
+
+```python
+data['seasonal'].index = pd.to_datetime(data['seasonal'].index)
+```
+
+📈 모델 성능 검증 체계
+1. **교차 검증 강화**
+```python
+# evaluator.py - Prophet 검증
+def validate_prophet(model, train_data):
+    # 3년 초기 데이터 → 13주 단위 검증
+    df_cv = cross_validation(
+        model, 
+        initial='728 days', 
+        period='91 days', 
+        horizon='182 days',
+        parallel="processes"
+    )
+    return performance_metrics(df_cv)
+```
+
+2. **앙상블 가중치 계산 로직**
+```python
+# run_phase2.py - R² 기반 가중치 최적화
+prophet_score = max(results[style].get('r2', 0), 0)  # 음수 값 방지
+arima_score = max(evaluate_arima(...).get('r2', 0), 0)
+total = prophet_score + arima_score
+weights = (prophet_score/total, arima_score/total) if total !=0 else (0.5, 0.5)
+```
 
 ---
 
 ### 📜 라이선스
 [MIT License](LICENSE) © 장영수  
 문의: [GitHub](https://github.com/Yeongsoo-Jang) | 이메일: `9135jys@gmail.com`
+
+
+
+
