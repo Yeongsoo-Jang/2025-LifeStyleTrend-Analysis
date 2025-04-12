@@ -39,6 +39,7 @@
 
 # 📊 트렌드 리포트
 
+- **분석 결과 HTML**
 [![HTML Preview](https://img.shields.io/badge/HTML_Preview-Open_in_Tab-green)](https://htmlpreview.github.io/?https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis/blob/main/modeling/reports/trend_insights.html)
 
 ![정규화된 트렌드 시각화](./modeling/reports/real_time_search_trends.png)
