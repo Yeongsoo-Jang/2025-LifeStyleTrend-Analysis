@@ -39,7 +39,7 @@
 
 # 📊 트렌드 리포트
 
-[![View Full Report](https://img.shields.io/badge/View_Full_HTML_Report-00B4D8?style=for-the-badge&logo=html5&logoColor=white)](https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis/blob/main/modeling/reports/trend_insights.html)
+[![HTML Preview](https://img.shields.io/badge/HTML_Preview-Open_in_Tab-green)](https://htmlpreview.github.io/?https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis/blob/main/modeling/reports/trend_insights.html)
 
 ![정규화된 트렌드 시각화](./modeling/reports/real_time_search_trends.png)
 
@@ -72,25 +72,17 @@
 
 ### 🚀 프로젝트 실행 방법
 
-1. 저장소 복제 및 환경 설정:
-    ```
-    git clone https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis.git
-    cd 2025-LifeStyleTrend-Analysis
-    python -m venv .venv && source .venv/bin/activate
-    pip install -r requirements.txt
-    ```
-
-2. 데이터 수집:
+1. 데이터 수집:
     ```
     python connector/connect.py
     ```
 
-3. 분석 파이프라인 실행:
+2. 분석 파이프라인 실행:
     ```
     python modeling/run_phase2.py
     ```
 
-4. 결과 확인:
+3. 결과 확인:
     - `modeling/reports/trend_insights.html`: 종합 분석 리포트  
     - `modeling/reports/real_time_search_trends.png`: 실시간 검색 트렌드 시각화  
 
