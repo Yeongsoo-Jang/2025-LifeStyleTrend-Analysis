@@ -1,13 +1,15 @@
+# validator.py
 import pandas as pd
 
-def validate_data(df: pd.DataFrame) -> bool:
-    """데이터 품질 검증"""
-    assert not df.empty, "데이터가 존재하지 않습니다"
-    assert df.duplicated().sum() == 0, "중복 데이터 존재"
-    assert df["ratio"].isnull().sum() == 0, "결측값 존재"
-    print("✓ 데이터 검증 완료")
-    return True
+def validate_data(df: pd.DataFrame):
+    # 필수 컬럼 검증
+    assert {'date', 'group_name', 'ratio'} <= set(df.columns)
+    
+    # 날짜 범위 검증 (최소 2년)
+    date_range = pd.to_datetime(df['date']).max() - pd.to_datetime(df['date']).min()
+    assert date_range.days >= 730, f"데이터 범위 부족: {date_range.days}일"
+    
+    # 변동성 기준 필터링
+    valid_groups = [g for g, d in df.groupby('group_name') if d['ratio'].std() > 0.01]
+    return df[df['group_name'].isin(valid_groups)]
 
-
-# 실행 예시
-# validate_data(cleaned_df)

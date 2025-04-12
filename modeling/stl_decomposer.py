@@ -44,7 +44,7 @@ def _decompose_group(args: Tuple[str, pd.DataFrame, int]) -> Dict:
         decomposition = STL(
             group_df.set_index('date')['ratio'],
             period=period,
-            robust=True,
+            robust=True,    # 이상치 강건성 활성화
             seasonal_deg=0  # 계절성 차수 조정
         ).fit()
         
