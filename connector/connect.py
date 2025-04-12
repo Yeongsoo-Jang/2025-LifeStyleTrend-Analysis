@@ -6,6 +6,8 @@ from processed.monitor import update_dashboard
 import os
 import warnings
 warnings.filterwarnings("ignore")
+from dotenv import load_dotenv
+load_dotenv()  # .env 파일 로드
 
 def connect():
     """프로그램 진입점"""
