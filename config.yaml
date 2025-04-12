@@ -1,0 +1,25 @@
+
+api_config:
+  start_date: "2022-04-01"  # 데이터 수집 시작일
+  end_date: "2025-04-01"    # 데이터 수집 종료일
+  time_unit: "week"         # 집계 단위 (date/week/month)
+  device: "mo"           # 기기 타입 (pc/mo)
+  ages: ["2", "3", "4"]         # 연령대 (1/2/3/4/5/6)
+  gender: "f"                # 성별 (m/f)
+  
+keyword_groups:
+  - group_name: "UncommonStyle" 
+    keywords: 
+      - "지브리 인테리어"
+      - "파스텔 인테리어"
+      - "서재방 인테리어"
+  - group_name: "HomeAppliances"
+    keywords:  
+      - "로보락"
+      - "식기세척기"
+      - "미니 건조기"
+  - group_name: "Cost-Effective"
+    keywords:  
+      - "삼텐바이미"
+      - "차이슨 청소기"
+      - "1+1 가구"
