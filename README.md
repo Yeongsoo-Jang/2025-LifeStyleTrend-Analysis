@@ -8,26 +8,10 @@
 
 ---
 
-## 🛠 기술 스택
-```bash
-# 1. 저장소 복제 및 환경 설정
-git clone https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis.git
-cd 2025-LifeStyleTrend-Analysis
-python -m venv .venv && source .venv/bin/activate
-
-# 2. 의존성 설치
-pip install -r requirements.txt
-
-# 3. 메인 파이프라인 실행
-python modeling/run_phase2.py
-```
-
----
-
 ## 📂 프로젝트 구조
 ```
 ├── data/                  
-│ ├── .env # API 키 등 민감정보
+│ ├── .env # API 키 등 민감정보(**개인 생성 및 NAVER API 키 작성 필요)
 │ ├── config.yaml # 분석 대상 키워드 설정
 │ └── processed/ # 정제된 데이터
 ├── connector/
@@ -55,7 +39,9 @@ python modeling/run_phase2.py
 
 # 📊 트렌드 리포트
 
-![2025 라이프스타일 트렌드 리포트](./trend_insights.svg)
+[![View Full Report](https://img.shields.io/badge/View_Full_HTML_Report-00B4D8?style=for-the-badge&logo=html5&logoColor=white)](https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis/blob/main/modeling/reports/trend_insights.html)
+
+![정규화된 트렌드 시각화](./modeling/reports/real_time_search_trends.png)
 
 > **Cost-Effective**  
 > - 주간 성장률: **10.84%**  
@@ -78,40 +64,38 @@ python modeling/run_phase2.py
 ### 성능 비교표 (R²)
 | 그룹           | Prophet | ARIMA | 앙상블 |
 |----------------|---------|-------|--------|
-| Cost-Effective | 0.82    | 0.78  | 0.85   |
-| UncommonStyle  | 0.89    | 0.81  | 0.91   |
+| Cost-Effective | 0.98    | 0.94  | 0.98   |
+| HomeAppliances | 0.96    | 0.92  | 0.96   |
+| UncommonStyle  | 0.94    | 0.91  | 0.94   |
 
 ---
 
-## 🧠 핵심 기술
-1. **STL 분해 최적화**  
-```python
-# 52주 주기 고정 + 강건성 향상
-STL(series, period=52, robust=True).fit()
-```
+### 🚀 프로젝트 실행 방법
 
-2. **앙상블 가중치 계산**  
-```python
-weights = (prophet_r2 / total_r2, arima_r2 / total_r2)
-```
+1. 저장소 복제 및 환경 설정:
+    ```
+    git clone https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis.git
+    cd 2025-LifeStyleTrend-Analysis
+    python -m venv .venv && source .venv/bin/activate
+    pip install -r requirements.txt
+    ```
 
-3. **트렌드 지수 공식**  
-```math
-\text{Trend Index} = \beta \times R^2
-```
+2. 데이터 수집:
+    ```
+    python connector/connect.py
+    ```
+
+3. 분석 파이프라인 실행:
+    ```
+    python modeling/run_phase2.py
+    ```
+
+4. 결과 확인:
+    - `modeling/reports/trend_insights.html`: 종합 분석 리포트  
+    - `modeling/reports/real_time_search_trends.png`: 실시간 검색 트렌드 시각화  
 
 ---
 
-## 📜 라이선스
-[MIT License](LICENSE) © 2025 장영수  
-**문의**: [포트폴리오](https://github.com/Yeongsoo-Jang) | 9135jys@gmail.com
-
----
-
-> "데이터는 미래를 보는 창입니다. 이 프로젝트는 2025 인테리어 시장의 전략 수립을 지원합니다."  
----
-
-✨ **Tip for Interviewers**:  
-- [코어 로직 살펴보기](modeling/run_phase2.py)  
-- [최종 리포트 샘플 확인](modeling/reports/trend_insights.html)  
-- [기술적 도전 사항 분석](https://github.com/Yeongsoo-Jang/2025-LifeStyleTrend-Analysis/issues/1)
+### 📜 라이선스
+[MIT License](LICENSE) © 장영수  
+문의: [GitHub](https://github.com/Yeongsoo-Jang) | 이메일: `9135jys@gmail.com`
